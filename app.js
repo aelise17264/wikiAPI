@@ -53,6 +53,20 @@ app.route("/articles")
         })
     })
 
+app.route("/articles/:articleName")
+    .get(function(req, res){
+        const requestedArticle = req.params.articleName
+        Article.findOne({title: requestedArticle}, function(err, foundArticle){
+            if(!err){
+            // console.log(foundArticles)
+                res.send( foundArticle)
+            }else{
+                res.send(err)
+            }
+        })
+})
+
+
 app.listen(3000, function(){
     console.log("Server running on port 3000")
 })
