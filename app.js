@@ -19,31 +19,39 @@ const articleSchema = {
 
 const Article = mongoose.model("Article", articleSchema)
 
-app.get("/articles", function(req, res){
-    Article.find({}, function(err, foundArticles){
-        if(!err){
-        // console.log(foundArticles)
-            res.send( foundArticles)
-        }else{
-            res.send(err)
-        }
+app.route("/articles")
+    .get(function(req, res){
+        Article.find({}, function(err, foundArticles){
+            if(!err){
+            // console.log(foundArticles)
+                res.send( foundArticles)
+            }else{
+                res.send(err)
+            }
+        })
     })
-})
-
-app.post("/articles", function(req, res){
-    const newArticle = new Article({
-        title: req.body.title,
-        content: req.body.content
+    .post(function(req, res){
+        const newArticle = new Article({
+            title: req.body.title,
+            content: req.body.content
+        })
+        newArticle.save(function(err){
+            if(!err){
+                console.log("added to list of articles")
+            }else{
+                console.log(err)
+            }
+        })
     })
-    newArticle.save(function(err){
-        if(!err){
-            console.log("added to list of articles")
-        }else{
-            console.log(err)
-        }
+    .delete(function(req, res){
+        Article.deleteMany({}, function(err){
+            if(!err){
+                res.send('all the articles are gone')
+            }else{
+                res.send(err)
+            }
+        })
     })
-})
-
 
 app.listen(3000, function(){
     console.log("Server running on port 3000")
