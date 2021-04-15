@@ -19,6 +19,8 @@ const articleSchema = {
 
 const Article = mongoose.model("Article", articleSchema)
 
+//REQUESTS TARGETING ALL ARTICLES
+
 app.route("/articles")
     .get(function(req, res){
         Article.find({}, function(err, foundArticles){
@@ -53,6 +55,9 @@ app.route("/articles")
         })
     })
 
+
+   //REQUESTS TARGETING SINGLE ARTICLES 
+
 app.route("/articles/:articleName")
     .get(function(req, res){
         const requestedArticle = req.params.articleName
@@ -65,6 +70,46 @@ app.route("/articles/:articleName")
             }
         })
 })
+    .put(function(req, res){
+        const requestedArticle = req.params.articleName
+
+        Article.updateOne({title: requestedArticle},
+            {title: req.body.title, content: req.body.content},
+            {overwrite: true},
+             function(err){
+                if(!err){
+                    res.send("Article was updated")
+                }else{
+                    res.send(err)
+                }
+             })
+    })
+    .patch(function(req, res){
+       
+        Article.updateOne(
+            {title: req.params.articleName},
+            {$set: req.body},
+            function(err){
+                if(!err){
+                    res.send("Article was updated")
+                }else{
+                    res.send(err)
+                }
+            })
+
+    })
+    .delete(function(req, res){
+        Article.deleteOne(
+            {title: req.params.articleName},
+            function(err){
+                if(!err){
+                    console.log("this article is history")
+                }else{
+                    console.log(err)
+                }
+            }
+            )
+    })
 
 
 app.listen(3000, function(){
